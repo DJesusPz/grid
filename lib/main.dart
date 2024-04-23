@@ -92,6 +92,14 @@ class MyHomePage extends StatelessWidget {
                     context); // Muestra la información del desarrollador
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.post_add), // Icono de posts
+              title: const Text('API Posts'),
+              onTap: () {
+                Navigator.pop(context);
+                _fetchAndShowPosts(context); // Muestra los posts desde la API
+              },
+            ),
           ],
         ),
       ),
@@ -181,10 +189,6 @@ class MyHomePage extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text(
-            _getSnakeInfo(index), // Obtener la información de la serpiente
-            textAlign: TextAlign.center,
-          ),
           onTap: () {
             _showSnakeInfo(
                 context, index); // Muestra la información de la serpiente
@@ -236,9 +240,17 @@ class MyHomePage extends StatelessWidget {
     // Lógica para obtener el nombre de la serpiente
     switch (index) {
       case 0:
-        return "serpientes de cascabel (Crotalus)";
+        return "Serpientes de cascabel (Crotalus)";
       case 1:
-        return "Serpiente 2";
+        return "Boa constrictora (Boa constrictor)";
+      case 2:
+        return "Cobra de anteojos (Naja naja)";
+      case 3:
+        return "Anaconda verde (Eunectes murinus)";
+      case 4:
+        return "Piton (Pythonidae)";
+      case 5:
+        return "Mamba negra (Dendroaspis polylepis)";
       // Agregar más casos según sea necesario
       default:
         return "Serpiente $index";
@@ -249,12 +261,67 @@ class MyHomePage extends StatelessWidget {
     // Lógica para obtener la información de la serpiente
     switch (index) {
       case 0:
-        return "Son un género de la subfamilia de las víboras de foseta dentro de la familia de los vipéridos.Son serpientes venenosas y endémicas del continente americano, desde el sureste de Canadá al norte de Argentina.";
+        return "son un género de la subfamilia de las víboras de foseta dentro de la familia de los vipéridos. Son serpientes venenosas y endémicas del continente americano, desde el sureste de Canadá al norte de Argentina. Todas las especies menos una, C. catalinensis, son fácilmente reconocibles por el característico sonido de su cascabel el cual se encuentra en la punta de la cola. Existe otro género, Sistrurus, con especies más pequeñas, que también tienen un cascabel, pero no tan desarrollado. Se han reconocido 29 especies de serpientes de cascabel.";
       case 1:
-        return "Información de la serpiente 2";
+        return "Es una especie de serpiente grande de la familia Boidae que habita en América, principalmente en gran parte de la cuenca del Amazonas. Es la única especie conocida del género Boa o, de acuerdo a otra clasificación, cada subespecie es una especie distinta y Boa constrictor sería la principal especie sudamericana.";
+      case 2:
+        return "Es una especie de serpiente venenosa originaria del Subcontinente indio. Como otras cobras, la cobra de anteojos es famosa por el capuchón que despliega alrededor de su cabeza cuando se encuentra excitada o amenazada. En la parte de atrás del capuchón tiene dos manchas negras unidas por una línea curva, que da la impresión de ser unos anteojos. El tamaño medio de estas cobras se encuentra en torno al metro, aunque rara vez superan los 2 metros de longitud.";
+      case 3:
+        return "Es una especie de serpiente constrictora de la familia de las boas (Boidae). Es endémica de los ríos del trópico de Sudamérica. De todas las serpientes esta es la de mayor tamaño (hablando de peso); se la hace rivalizar con la pitón reticulada (Malayopython reticulatus) por el título de la serpiente más grande del mundo, que suele ser más larga, pero menos voluminosa. Se conocen casos de humanos adultos atacados, aunque ninguna serpiente (Malayopython reticulatus como excepción) tiende a atacar a un ser humano, salvo por defensa propia, ya que estos no forman parte de su cadena trófica.";
+      case 4:
+        return "Son una familia de serpientes constrictoras propias del paleotrópico. Otras fuentes consideran a este grupo una subfamilia de la familia de las boas (Boidae) (subfamilia Pythoninae). Las pitones se pueden distinguir de las boas en que tienen dientes en el premaxilar, un pequeño hueso en la parte frontal de la mandíbula superior. La mayoría de las boas dan a luz crías vivas, mientras que las pitones ponen huevos. Algunas variedades pueden llegar a ser muy largas: hasta ocho metros. Ciertas especies de boas de arena (subfamilia Ericinae) son llamadas erróneamente pitones.";
+      case 5:
+        return "Es una especie de serpiente de la familia Elapidae extremadamente venenosa que habita en diversas zonas del África subsahariana. Descrita formalmente por Albert Günther en 1864, es la segunda serpiente venenosa de mayor tamaño, después de la cobra real; aunque hay informes de ejemplares de algo más de cuatro metros, los adultos normalmente miden entre dos y tres metros. El color de su piel varía de gris a marrón oscuro; los ejemplares jóvenes tienden a ser más pálidos que los adultos y se oscurecen con la edad.";
       // Agregar más casos según sea necesario
       default:
         return "Información de la serpiente $index";
     }
   }
+
+  void _fetchAndShowPosts(BuildContext context) {
+    // Llamar a la función para obtener los posts desde la API y mostrarlos
+    Buscapost().then((r) {
+      showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text("API Post"),
+            ),
+            body: ListView.builder(
+              itemCount: r.length,
+              itemBuilder: (BuildContext context, int i) {
+                return ListTile(
+                  title: Text(r[i].title),
+                  leading: Text(r[i].id.toString()),
+                );
+              },
+            ),
+          );
+        },
+      );
+    });
+  }
+}
+
+// Simulación de la función para buscar posts desde la API
+Future<List<Post>> Buscapost() async {
+  // Aquí iría tu lógica para llamar a la API y obtener los posts
+  // Por simplicidad, aquí solo retornamos una lista predefinida de posts
+  return List.generate(
+    10,
+    (index) => Post(
+      id: index + 1,
+      title: 'Post ${index + 1}',
+    ),
+  );
+}
+
+// Modelo de datos para un post
+class Post {
+  final int id;
+  final String title;
+
+  Post({required this.id, required this.title});
 }
